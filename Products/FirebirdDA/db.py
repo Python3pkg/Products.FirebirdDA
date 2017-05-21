@@ -10,7 +10,7 @@
 # FOR A PARTICULAR PURPOSE
 #
 ##############################################################################
-import os, thread, string
+import os, _thread, string
 import firebirdsql
 import Shared.DC.ZRDB.THUNK
 from DateTime import DateTime
@@ -91,7 +91,7 @@ class DB(Shared.DC.ZRDB.THUNK.THUNKED_TM):
 
         d = {}
         for row in rows:
-            if not d.has_key(row['INDEX_ID']):
+            if row['INDEX_ID'] not in d:
                 if row['CONST_TYPE']:
                     const_type = row['CONST_TYPE']
                 else:
@@ -259,8 +259,8 @@ class DB(Shared.DC.ZRDB.THUNK.THUNKED_TM):
     def query(self,query_string, max_rows=9999999):
         c = self.conn.cursor()
 
-        queries=filter(None, map(string.strip,string.split(query_string, '\0')))
-        if not queries: raise QueryError, 'empty query'
+        queries=[_f for _f in map(string.strip,string.split(query_string, '\0')) if _f]
+        if not queries: raise QueryError('empty query')
         desc=None
         result=[]
         for qs in queries:
@@ -269,10 +269,9 @@ class DB(Shared.DC.ZRDB.THUNK.THUNKED_TM):
             if d is None: continue
             if desc is None: desc=d
             elif d != desc:
-                raise QueryError, (
+                raise QueryError(
                     'Multiple incompatible selects in '
-                    'multiple sql-statement query'
-                    )
+                    'multiple sql-statement query')
 
             if len(result) < max_rows:
                 r = c.fetchmany(max_rows-len(result))

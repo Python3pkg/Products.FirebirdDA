@@ -12,7 +12,7 @@
 ##############################################################################
 database_type='Firebird'
 
-from db import DB
+from .db import DB
 import sys, DABase
 import Shared.DC.ZRDB.Connection, ThreadLock
 from App.special_dtml import HTMLFile

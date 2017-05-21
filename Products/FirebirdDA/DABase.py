@@ -75,7 +75,7 @@ class Connection(Shared.DC.ZRDB.Connection.Connection):
         if name=='tableNamed':
             if not hasattr(self, '_v_tables'): self.tpValues()
             return self._v_tables.__of__(self)
-        raise KeyError, name
+        raise KeyError(name)
 
 class Browser(Base):
     info=None
